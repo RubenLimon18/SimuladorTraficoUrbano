@@ -1,7 +1,6 @@
 package clases;
 import java.awt.Color;
 
-
 /*
  * Semáforo que controla una intersección
  * Es un hilo independiente que cambia de estado automáticamente
@@ -19,8 +18,8 @@ public class Semaforo extends Thread {
     private boolean ejecutando;
     private long tiempoUltimoCambio;
 
-    // Control de direcciones permitidas
-    private Direccion direccionVerde;
+    // Control de direcciones permitidas - CAMBIADO
+    private boolean direccionHorizontal;
 
     // Constructor
     public Semaforo(Interseccion interseccion, int tiempoVerde, int tiempoAmarillo, int tiempoRojo){
@@ -32,7 +31,7 @@ public class Semaforo extends Thread {
         this.estadoSemaforoActual = EstadoSemaforo.ROJO;
         this.ejecutando = true;
         this.tiempoUltimoCambio = System.currentTimeMillis();
-        this.direccionVerde = Direccion.ARRIBA; // Dirección inicial
+        this.direccionHorizontal = true; // Comienza con direcciones horizontales
 
         interseccion.setSemaforo(this);
         this.setDaemon(true);
@@ -67,7 +66,7 @@ public class Semaforo extends Thread {
             case AMARILLO:
                 if (tiempoTranscurrido >= tiempoAmarillo) {
                     cambiarColor(EstadoSemaforo.ROJO);
-                    cambiarDireccionVerde();
+                    alternarDirecciones(); // CAMBIADO
                 }
                 break;
             case ROJO:
@@ -75,50 +74,48 @@ public class Semaforo extends Thread {
                     cambiarColor(EstadoSemaforo.VERDE);
                 }
                 break;
-
         }
-
     }
 
     // Método para cambiar de color el semaforo
     private void cambiarColor(EstadoSemaforo nuevoEstadoSemaforo) {
         this.estadoSemaforoActual = nuevoEstadoSemaforo;
         this.tiempoUltimoCambio = System.currentTimeMillis();
-        System.out.println("Semáforo " + interseccion + " cambió a " + nuevoEstadoSemaforo);
+        System.out.println("Semáforo " + interseccion + " cambió a " + nuevoEstadoSemaforo +
+                " - Direcciones: " + (direccionHorizontal ? "HORIZONTAL" : "VERTICAL"));
     }
 
-    // Método para rotar direcciones principales
-    private void cambiarDireccionVerde(){
-        switch(direccionVerde){
-            case ARRIBA: direccionVerde = Direccion.ABAJO; break;
-            case ABAJO: direccionVerde = Direccion.DERECHA; break;
-            case DERECHA: direccionVerde = Direccion.IZQUIERDA; break;
-            case IZQUIERDA: direccionVerde = Direccion.ARRIBA; break;
-        }
+    // CAMBIADO: Alternar entre direcciones horizontales y verticales
+    private void alternarDirecciones(){
+        direccionHorizontal = !direccionHorizontal;
     }
 
-    // Verifica si el vehiculo puede pasar en la direccion dada
+    // CAMBIADO: Lógica de paso más flexible
     public boolean puedePasar(Direccion direccion){
         if(estadoSemaforoActual == EstadoSemaforo.VERDE){
-            return direccion == direccionVerde || direccion == direccionVerde.opuesta();
-
+            // Si es horizontal: permitir DERECHA e IZQUIERDA
+            if (direccionHorizontal) {
+                return direccion == Direccion.DERECHA || direccion == Direccion.IZQUIERDA;
+            }
+            // Si es vertical: permitir ARRIBA y ABAJO
+            else {
+                return direccion == Direccion.ARRIBA || direccion == Direccion.ABAJO;
+            }
         } else if (estadoSemaforoActual == EstadoSemaforo.AMARILLO){
-            return true;
+            return true; // En amarillo todos pueden pasar con precaución
         }
-        return false;
+        return false; // En rojo nadie pasa
     }
-
 
     public void detener() {
         this.ejecutando = false;
         this.interrupt();
     }
 
-
     // Getters
     public EstadoSemaforo getEstadoActual() { return estadoSemaforoActual; }
     public Interseccion getInterseccion() { return interseccion; }
-    public Direccion getDireccionVerde() { return direccionVerde; }
+    public boolean isDireccionHorizontal() { return direccionHorizontal; } // NUEVO
 
     public Color getColorVisual() {
         switch (estadoSemaforoActual) {
@@ -128,10 +125,4 @@ public class Semaforo extends Thread {
             default: return Color.GRAY;
         }
     }
-
 }
-
-
-
-
-

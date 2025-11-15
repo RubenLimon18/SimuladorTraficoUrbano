@@ -57,7 +57,7 @@ public class SimulacionConfiguracion {
 
 
     // Getters y Setters
-    public int getCiudadTamano() { return ciudadTamanio; }
+    public int getCiudadTamanio() { return ciudadTamanio; }
     public void setCiudadTamano(int ciudadTamano) { this.ciudadTamanio = ciudadTamano; }
 
     public int getNumVehiculos() { return numVehiculos; }

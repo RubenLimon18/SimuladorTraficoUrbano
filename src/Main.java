@@ -1,15 +1,40 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import interfaz.MainFrame;
+import javax.swing.*;
+
+/**
+ * Clase principal para ejecutar la simulación de tráfico
+ */
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        // Establecer el look and feel del sistema
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+            // Mejorar la apariencia en sistemas Windows
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                UIManager.put("Button.arc", 10);
+                UIManager.put("Component.arc", 10);
+                UIManager.put("ProgressBar.arc", 10);
+                UIManager.put("TextComponent.arc", 5);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al establecer el look and feel: " + e.getMessage());
         }
+
+        // Ejecutar la aplicación en el EDT
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new MainFrame().setVisible(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,
+                        "Error al iniciar la aplicación: " + e.getMessage(),
+                        "Error Crítico",
+                        JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        });
     }
 }
