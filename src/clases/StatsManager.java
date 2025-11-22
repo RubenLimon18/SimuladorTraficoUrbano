@@ -25,24 +25,6 @@ public class StatsManager {
         tiempoPrimerVehiculo = 0;
     }
 
-    /**
-     * Registra cuando un vehículo llega a su destino
-     */
-    public void registrarLlegadaVehiculo(Vehiculo vehiculo) {
-        if (primerVehiculoEnLlegar == null) {
-            primerVehiculoEnLlegar = vehiculo;
-            tiempoPrimerVehiculo = vehiculo.getTiempoViaje() / 1000; // Convertir a segundos
-        }
-        ultimoVehiculoEnLlegar = vehiculo;
-    }
-
-    /**
-     * Registra una colisión evitada
-     */
-    public void registrarColisionEvitada() {
-        colisionesEvitadas++;
-    }
-
     // Métodos de estadísticas
 
     public long getTiempoTotalSimulacion() {

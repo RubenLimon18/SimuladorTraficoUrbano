@@ -27,10 +27,6 @@ public enum Direccion{
         this.dy = dy;
     }
 
-    // Métodos
-    public int getDx() { return this.dx; }
-    public int getDy() { return this.dy; }
-
     // En caso de que sea la dirección opuesta
     public Direccion opuesta(){
         switch (this) {

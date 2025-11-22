@@ -239,7 +239,7 @@ public class ConfigDialog extends JDialog {
     }
 
     // Getters para testing
-    public JSpinner getSpnTamanoCiudad() { return spnTamanoCiudad; }
-    public JSpinner getSpnNumVehiculos() { return spnNumVehiculos; }
-    public JButton getBtnAplicar() { return btnAplicar; }
+//    public JSpinner getSpnTamanoCiudad() { return spnTamanoCiudad; }
+//    public JSpinner getSpnNumVehiculos() { return spnNumVehiculos; }
+//    public JButton getBtnAplicar() { return btnAplicar; }
 }

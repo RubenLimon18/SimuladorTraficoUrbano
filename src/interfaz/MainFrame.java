@@ -269,7 +269,7 @@ public class MainFrame extends JFrame{
     }
 
     private void actualizarTitulo() {
-        setTitle("🚦 Simulador de Tráfico Urbano - Ciudad " + config.getCiudadTamanio() + "x" + config.getCiudadTamanio());
+        setTitle("Simulador de Tráfico Urbano - Ciudad " + config.getCiudadTamanio() + "x" + config.getCiudadTamanio());
     }
 
     /*
@@ -301,15 +301,10 @@ public class MainFrame extends JFrame{
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(this,
                     stats.generarResumenCompleto(),
-                    "🏁 Resumen de Simulación",
+                    "Resumen de Simulación",
                     JOptionPane.INFORMATION_MESSAGE);
         });
     }
-
-    // Getters para los paneles
-    public CityPanel getCityPanel() { return cityPanel; }
-    public StatsPanel getStatsPanel() { return statsPanel; }
-    public Ciudad getCiudad() { return ciudad; }
 
     public static void main(String[] args) {
         try {
