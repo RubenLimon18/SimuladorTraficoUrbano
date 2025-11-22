@@ -542,29 +542,6 @@ public class Vehiculo extends Thread {
     /**
      * SOLUCIÓN DE EMERGENCIA - Ejecutar esto para vehículos atascados
      */
-    public void solucionEmergencia() {
-        System.err.println("🚨 APLICANDO SOLUCIÓN DE EMERGENCIA AL VEHÍCULO " + id);
-
-        // Liberar intersección actual
-        if (posicionActual != null && !posicionActual.equals(partida)) {
-            try {
-                if (tieneMetodoIntentarSalir(posicionActual)) {
-                    posicionActual.intentarSalir(this);
-                } else {
-                    posicionActual.salir(this);
-                }
-            } catch (Exception e) {
-                // Ignorar
-            }
-        }
-
-        // Teletransportar al destino
-        this.posicionActual = destino;
-        this.haLlegado = true;
-        this.interrupt();
-
-        System.err.println("✅ Vehículo " + id + " teletransportado a destino " + destino);
-    }
 
     /**
      * Pausa el vehículo
@@ -612,7 +589,6 @@ public class Vehiculo extends Thread {
 
     // Getters para estado del vehículo
     public int getIdVehiculo() { return id; }
-    public Interseccion getPartida() { return partida; }
     public Interseccion getDestino() { return destino; }
     public Interseccion getInterseccionActual() { return posicionActual; }
     public boolean haLlegado() { return haLlegado; }

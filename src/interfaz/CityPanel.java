@@ -164,19 +164,19 @@ public class CityPanel extends JPanel {
 
             for (Vehiculo vehiculo : vehiculos) {
                 if (vehiculo == null) {
-                    System.out.println("❌ Vehículo nulo en la lista");
+                    System.out.println("Vehículo nulo en la lista");
                     continue;
                 }
 
                 if (vehiculo.haLlegado()) {
                     vehiculosLlegados++;
-                    System.out.println("⏭️ Saltando vehículo " + vehiculo.getIdVehiculo() + " - ya llegó");
+                    System.out.println("⏭Saltando vehículo " + vehiculo.getIdVehiculo() + " - ya llegó");
                     continue;
                 }
 
                 Point punto = obtenerPosicionVehiculo(vehiculo);
                 if (punto != null && punto.x >= 0 && punto.y >= 0) {
-                    System.out.println("🚗 Dibujando vehículo " + vehiculo.getIdVehiculo() +
+                    System.out.println("Dibujando vehículo " + vehiculo.getIdVehiculo() +
                             " en posición: " + punto +
                             " | Intersección: " + vehiculo.getInterseccionActual());
 
@@ -220,14 +220,14 @@ public class CityPanel extends JPanel {
                     vehiculosDibujados++;
                 } else {
                     vehiculosConProblemas++;
-                    System.out.println("❌ Problema con vehículo " + vehiculo.getIdVehiculo() +
+                    System.out.println("Problema con vehículo " + vehiculo.getIdVehiculo() +
                             " - punto: " + punto +
                             " - intersección: " + vehiculo.getInterseccionActual());
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("❌ ERROR en dibujarVehiculos: " + e.getMessage());
+            System.err.println("ERROR en dibujarVehiculos: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -237,11 +237,11 @@ public class CityPanel extends JPanel {
         if (inter != null) {
             Point punto = posicionesCache.get(inter);
             if (punto == null) {
-                System.out.println("❌ No se encontró punto en cache para: " + inter);
+                System.out.println("No se encontró punto en cache para: " + inter);
             }
             return punto;
         } else {
-            System.out.println("❌ Vehículo " + vehiculo.getIdVehiculo() + " tiene intersección actual NULL");
+            System.out.println("Vehículo " + vehiculo.getIdVehiculo() + " tiene intersección actual NULL");
         }
         return null;
     }
@@ -285,17 +285,4 @@ public class CityPanel extends JPanel {
         repaint();
     }
 
-    /**
-     * Obtiene la intersección en una posición de pixel
-     */
-    public Interseccion getInterseccionEnPosicion(Point punto) {
-        for (Map.Entry<Interseccion, Point> entry : posicionesCache.entrySet()) {
-            Point pos = entry.getValue();
-            double distancia = punto.distance(pos);
-            if (distancia <= RADIO_INTERSECCION) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
 }

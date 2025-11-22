@@ -40,11 +40,11 @@ public class ControlPanel extends JPanel {
 
     private void inicializarComponentes() {
         // Botones principales
-        btnIniciar = crearBoton("▶ Iniciar", Color.GREEN, "Iniciar simulación");
-        btnPausar = crearBoton("⏸ Pausar", Color.YELLOW, "Pausar/Reanudar simulación");
-        btnDetener = crearBoton("⏹ Detener", Color.RED, "Detener simulación");
+        btnIniciar = crearBoton("Iniciar", Color.GREEN, "Iniciar simulación");
+        btnPausar = crearBoton("Pausar", Color.YELLOW, "Pausar/Reanudar simulación");
+        btnDetener = crearBoton("Detener", Color.RED, "Detener simulación");
         btnConfigurar = crearBoton("⚙ Configurar", Color.CYAN, "Configurar simulación");
-        btnSalir = crearBoton("🚪 Salir", Color.LIGHT_GRAY, "Salir de la aplicación");
+        btnSalir = crearBoton("Salir", Color.LIGHT_GRAY, "Salir de la aplicación");
 
         // Deshabilitar botones inicialmente
         btnPausar.setEnabled(false);
@@ -210,14 +210,4 @@ public class ControlPanel extends JPanel {
         lblEstado.setText("Estado: " + estado);
     }
 
-    public void actualizarProgreso(int porcentaje) {
-        progressBar.setValue(porcentaje);
-        progressBar.setString(porcentaje + "% completado");
-    }
-
-    // Getters para componentes (útil para testing)
-    public JButton getBtnIniciar() { return btnIniciar; }
-    public JButton getBtnPausar() { return btnPausar; }
-    public JButton getBtnDetener() { return btnDetener; }
-    public JSlider getSliderVelocidad() { return sliderVelocidad; }
 }

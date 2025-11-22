@@ -126,24 +126,6 @@ public class RoutePlanner {
         return ruta;
     }
 
-    // ✅ Método mejorado para evitar puntos muertos
-    public List<Interseccion> recalcularRutaEvitandoCongestion(Interseccion actual, Interseccion destino,
-                                                               Set<Interseccion> evitar) {
-        System.out.println("🔄 Recalculando ruta desde " + actual + " evitando congestión");
-
-        // Añadir intersecciones problemáticas a evitar
-        for (Interseccion problematica : evitar) {
-            System.out.println("🚫 Evitando intersección: " + problematica);
-        }
-
-        List<Interseccion> ruta = aStarEvitando(actual, destino, evitar);
-        if (ruta == null || ruta.isEmpty()) {
-            ruta = calcularRutaSimple(actual, destino);
-        }
-
-        return ruta;
-    }
-
     private List<Interseccion> aStarEvitando(Interseccion inicio, Interseccion destino,
                                              Set<Interseccion> evitar) {
         // Implementación similar a A* pero evitando ciertas intersecciones
@@ -190,31 +172,4 @@ public class RoutePlanner {
         return ruta;
     }
 
-    private Direccion obtenerDireccionMovimiento(Interseccion actual, Interseccion siguiente) {
-        if (actual == null || siguiente == null) {
-            return Direccion.ARRIBA;
-        }
-
-        int dx = siguiente.getX() - actual.getX();
-        int dy = siguiente.getY() - actual.getY();
-
-        // ✅ DETECCIÓN DE MOVIMIENTO INVÁLIDO
-        if ((dx != 0 && dy != 0) || (dx == 0 && dy == 0)) {
-            System.err.println("❌ ERROR: Movimiento inválido de " + actual + " a " + siguiente +
-                    " (dx=" + dx + ", dy=" + dy + ")");
-            // Forzar movimiento horizontal si hay problema
-            if (dx != 0) {
-                return dx > 0 ? Direccion.DERECHA : Direccion.IZQUIERDA;
-            } else {
-                return dy > 0 ? Direccion.ABAJO : Direccion.ARRIBA;
-            }
-        }
-
-        if (dx > 0) return Direccion.DERECHA;
-        if (dx < 0) return Direccion.IZQUIERDA;
-        if (dy > 0) return Direccion.ABAJO;
-        if (dy < 0) return Direccion.ARRIBA;
-
-        return Direccion.ARRIBA;
-    }
 }

@@ -6,7 +6,6 @@ import clases.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.List;
 
 /**
  * Panel que muestra estadísticas y métricas en tiempo real de la simulación
@@ -78,10 +77,10 @@ public class StatsPanel extends JPanel {
         configurarPanelSemaforos();
         configurarPanelMetricas();
 
-        tabbedPane.addTab("📊 Resumen", panelResumen);
-        tabbedPane.addTab("🚗 Vehículos", panelVehiculos);
-        tabbedPane.addTab("🚦 Semáforos", panelSemaforos);
-        tabbedPane.addTab("📈 Métricas", panelMetricas);
+        tabbedPane.addTab("Resumen", panelResumen);
+        tabbedPane.addTab("Vehículos", panelVehiculos);
+        tabbedPane.addTab("Semáforos", panelSemaforos);
+        tabbedPane.addTab("Métricas", panelMetricas);
 
         add(tabbedPane, BorderLayout.CENTER);
     }
@@ -207,10 +206,10 @@ public class StatsPanel extends JPanel {
     }
 
     private String obtenerEstadoVehiculo(Vehiculo vehiculo) {
-        if (vehiculo.haLlegado()) return "🏁 Llegó";
-        if (vehiculo.estaEsperando()) return "⏳ Esperando";
-        if (vehiculo.estaEnInterseccion()) return "🚦 En Intersección";
-        return "🚗 Moviéndose";
+        if (vehiculo.haLlegado()) return "Llegó";
+        if (vehiculo.estaEsperando()) return "Esperando";
+        if (vehiculo.estaEnInterseccion()) return "En Intersección";
+        return "Moviéndose";
     }
 
     private void actualizarTablaSemaforos(Ciudad ciudad) {
@@ -219,7 +218,7 @@ public class StatsPanel extends JPanel {
         for (Semaforo semaforo : ciudad.getSemaforos()) {
             Interseccion inter = semaforo.getInterseccion();
 
-            // ✅ CONVERTIR boolean a texto legible
+            // CONVERTIR boolean a texto legible
             String direccionesPermitidas;
             if (semaforo.isDireccionHorizontal()) {
                 direccionesPermitidas = "DERECHA/IZQUIERDA";
@@ -230,7 +229,7 @@ public class StatsPanel extends JPanel {
             Object[] fila = {
                     String.format("(%d,%d)", inter.getX(), inter.getY()),
                     semaforo.getEstadoActual().toString(),
-                    direccionesPermitidas, // ✅ TEXTO LEGIBLE en lugar de true/false
+                    direccionesPermitidas,
                     inter.getVehiculosEnEspera(),
                     String.format("%.1fs", inter.getTiempoPromedioEspera() / 1000.0)
             };
@@ -269,23 +268,8 @@ public class StatsPanel extends JPanel {
         // Mostrar mensaje de resumen
         JOptionPane.showMessageDialog(this,
                 stats.generarResumenCompleto(),
-                "🏁 Simulación Completada",
+                "Simulación Completada",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Limpia todas las estadísticas
-     */
-    public void limpiarEstadisticas() {
-        modelVehiculos.setRowCount(0);
-        modelSemaforos.setRowCount(0);
-        modelMetricas.setRowCount(0);
-
-        lblTiempoTotal.setText("0s");
-        lblVehiculosActivos.setText("0");
-        lblVehiculosCompletados.setText("0");
-        lblCongestionTotal.setText("0");
-        lblPrimerVehiculo.setText("N/A");
-        lblUltimoVehiculo.setText("N/A");
-    }
 }

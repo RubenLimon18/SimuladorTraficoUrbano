@@ -4,7 +4,6 @@ import algoritmo.RoutePlanner;
 
 import java.util.*;
 import java.util.concurrent.*;
-import javax.swing.SwingUtilities;
 
 /*
  * Representa la ciudad completa con calles, intersecciones, semáforos y vehículos
@@ -253,20 +252,6 @@ public class Ciudad {
     }
 
     /**
-     * Obtiene las calles conectadas a una intersección
-     */
-    public List<Calle> getCallesDesde(Interseccion interseccion) {
-        List<Calle> callesConectadas = new ArrayList<>();
-        for (Calle calle : calles) {
-            if (calle.getInicio().equals(interseccion) ||
-                    (calle.isDobleSentido() && calle.getFin().equals(interseccion))) {
-                callesConectadas.add(calle);
-            }
-        }
-        return callesConectadas;
-    }
-
-    /**
      * Obtiene una intersección por coordenadas
      */
     public Interseccion getInterseccion(int x, int y) {
@@ -279,11 +264,9 @@ public class Ciudad {
     // Getters
     public int getAncho() { return ancho; }
     public int getAlto() { return alto; }
-    public List<Calle> getCalles() { return calles; }
     public List<Semaforo> getSemaforos() { return semaforos; }
     public List<Vehiculo> getVehiculos() { return vehiculos; }
     public StatsManager getStatsManager() { return statsManager; }
-    public boolean isSimulacionActiva() { return simulacionActiva; }
 
     /**
      * Obtiene el número de vehículos activos (que no han llegado)

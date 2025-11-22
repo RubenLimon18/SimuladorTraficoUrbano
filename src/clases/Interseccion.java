@@ -1,6 +1,5 @@
 package clases;
 
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -123,14 +122,6 @@ public class Interseccion {
         this.semaforo = semaforo;
     }
 
-    public boolean estaDisponible(Direccion direccion) {
-        return !lock.isLocked() && semaforoPermitePaso(direccion);
-    }
-
-    public boolean estaOcupada(){
-        return lock.isLocked();
-    }
-
     public boolean semaforoPermitePaso(Direccion direccion){
         if (semaforo == null) return true;
         return semaforo.puedePasar(direccion);
@@ -144,10 +135,6 @@ public class Interseccion {
 
     public double getTiempoPromedioEspera() {
         return vehiculosAtendidos > 0 ? (double)tiempoTotalEspera / vehiculosAtendidos : 0;
-    }
-
-    public void decrementarVehiculosEnEspera() {
-        vehiculosEnEspera.decrementAndGet();
     }
 
     @Override
