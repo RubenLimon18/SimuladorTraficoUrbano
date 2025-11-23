@@ -79,7 +79,7 @@ public class Vehiculo extends Thread {
     @Override
     public void run() {
         tiempoInicioViaje = System.currentTimeMillis();
-        System.out.println("🚗 Vehículo " + id + " INICIÓ viaje de " + partida + " a " + destino);
+        System.out.println("Vehículo " + id + " INICIÓ viaje de " + partida + " a " + destino);
 
         while (ejecutando && !haLlegado && indiceRutaActual < ruta.size()) {
             try {
@@ -88,7 +88,7 @@ public class Vehiculo extends Thread {
                     continue;
                 }
 
-                // ✅ Verificar reset total si es necesario
+                // Verificar reset total si es necesario
                 if (debeHacerResetTotal()) {
                     resetTotal();
                 }
@@ -97,7 +97,7 @@ public class Vehiculo extends Thread {
                 Thread.sleep(500 + random.nextInt(500)); // Velocidad variable
 
             } catch (InterruptedException e) {
-                System.out.println("⏹️ Vehículo " + id + " interrumpido");
+                System.out.println("Vehículo " + id + " interrumpido");
                 Thread.currentThread().interrupt();
                 break;
             }
@@ -105,9 +105,9 @@ public class Vehiculo extends Thread {
 
         if (haLlegado) {
             tiempoFinViaje = System.currentTimeMillis();
-            System.out.println("🎉 Vehículo " + id + " LLEGÓ a destino en " + getTiempoViaje() + "ms");
+            System.out.println("Vehículo " + id + " LLEGÓ a destino en " + getTiempoViaje() + "ms");
         } else {
-            System.out.println("⏹️ Vehículo " + id + " detenido sin llegar al destino");
+            System.out.println("Vehículo " + id + " detenido sin llegar al destino");
         }
     }
 
@@ -115,10 +115,10 @@ public class Vehiculo extends Thread {
      * Intenta moverse a la siguiente intersección - VERSIÓN MEJORADA CON PREVENCIÓN DE DEADLOCKS
      */
     private void moverASiguienteInterseccion() {
-        // ✅ DETECCIÓN DE DEADLOCK
+        // DETECCIÓN DE DEADLOCK
         long tiempoActual = System.currentTimeMillis();
         if (tiempoActual - tiempoUltimoMovimiento > TIEMPO_MAXIMO_SIN_MOVER) {
-            System.err.println("🚨 Vehículo " + id + " posible DEADLOCK detectado - " +
+            System.err.println("[ALERTA] Vehículo " + id + " posible DEADLOCK detectado - " +
                     (tiempoActual - tiempoUltimoMovimiento) + "ms sin moverse");
             recuperarDeDeadlock();
             return;
@@ -126,23 +126,23 @@ public class Vehiculo extends Thread {
 
         if (indiceRutaActual >= ruta.size() - 1) {
             haLlegado = true;
-            System.out.println("🎉 Vehículo " + id + " LLEGÓ al destino final!");
+            System.out.println("Vehículo " + id + " LLEGÓ al destino final!");
             return;
         }
 
         Interseccion siguiente = ruta.get(indiceRutaActual + 1);
 
-        // ✅ VERIFICAR que no sea la misma intersección
+        // VERIFICAR que no sea la misma intersección
         if (siguiente.equals(posicionActual)) {
             indiceRutaActual++;
-            System.out.println("➡️ Vehículo " + id + " saltó a siguiente en ruta (misma intersección)");
+            System.out.println("Vehículo " + id + " saltó a siguiente en ruta (misma intersección)");
             tiempoUltimoMovimiento = System.currentTimeMillis();
             return;
         }
 
-        // ✅ VERIFICAR TIMEOUT GLOBAL
+        // VERIFICAR TIMEOUT GLOBAL
         if (System.currentTimeMillis() - tiempoInicioEsperaActual > TIEMPO_MAXIMO_ESPERA) {
-            System.out.println("⏰ Vehículo " + id + " TIMEOUT global, recalculando ruta...");
+            System.out.println("[TIMEOUT] Vehículo " + id + " global, recalculando ruta...");
             recalcularRutaPorCongestion();
             tiempoInicioEsperaActual = System.currentTimeMillis();
             return;
@@ -153,34 +153,34 @@ public class Vehiculo extends Thread {
         // Verificar semáforo
         if (siguiente.getSemaforo() != null &&
                 !siguiente.getSemaforo().puedePasar(direccionMovimiento)) {
-            System.out.println("🔴 Vehículo " + id + " esperando en semáforo " + siguiente);
+            System.out.println("Vehículo " + id + " esperando en semáforo " + siguiente);
             esperarEnSemaforo();
             intentosFallidosConsecutivos = 0;
             return;
         }
 
-        // ✅ INTENTAR ENTRAR con mejor manejo de errores
+        // INTENTAR ENTRAR con mejor manejo de errores
         boolean exito = false;
         try {
             exito = siguiente.intentarEntrar(this, direccionMovimiento);
         } catch (Exception e) {
-            System.err.println("❌ ERROR crítico en intentarEntrar para vehículo " + id + ": " + e.getMessage());
+            System.err.println("[ERROR] Crítico en intentarEntrar para vehículo " + id + ": " + e.getMessage());
             recalcularRutaPorCongestion();
             return;
         }
 
         if (exito) {
-            // ✅ ÉXITO: Movimiento seguro con manejo CORREGIDO de locks
+            // ÉXITO: Movimiento seguro con manejo CORREGIDO de locks
             lockMovimiento.lock();
             try {
-                System.out.println("🚗 Vehículo " + id + " se movió de " + posicionActual + " a " + siguiente);
+                System.out.println("Vehículo " + id + " se movió de " + posicionActual + " a " + siguiente);
 
-                // ✅ CORRECCIÓN CRÍTICA: Solo liberar si tenemos el lock de la intersección anterior
+                // CORRECCIÓN CRÍTICA: Solo liberar si tenemos el lock de la intersección anterior
                 if (posicionActual != null && !posicionActual.equals(siguiente)) {
                     liberarInterseccionAnterior(posicionActual);
                 }
 
-                // ✅ ACTUALIZAR posición
+                // ACTUALIZAR posición
                 posicionActual = siguiente;
                 indiceRutaActual++;
                 intentosFallidosConsecutivos = 0;
@@ -190,21 +190,21 @@ public class Vehiculo extends Thread {
                 // Verificar destino
                 if (posicionActual.equals(destino)) {
                     haLlegado = true;
-                    System.out.println("🎉 Vehículo " + id + " LLEGÓ al destino final: " + destino);
+                    System.out.println("Vehículo " + id + " LLEGÓ al destino final: " + destino);
                 }
             } finally {
                 lockMovimiento.unlock();
             }
         } else {
-            // ❌ FALLÓ: Manejo inteligente
+            // FALLÓ: Manejo inteligente
             intentosFallidosConsecutivos++;
-            System.out.println("⏳ Vehículo " + id + " esperando en " + siguiente +
+            System.out.println("Vehículo " + id + " esperando en " + siguiente +
                     " (intento " + intentosFallidosConsecutivos + "/" + MAX_INTENTOS_CONSECUTIVOS + ")");
 
             esperarEnInterseccion();
 
             if (intentosFallidosConsecutivos >= MAX_INTENTOS_CONSECUTIVOS) {
-                System.out.println("🔄 Vehículo " + id + " recalcula por " +
+                System.out.println("Vehículo " + id + " recalcula por " +
                         intentosFallidosConsecutivos + " intentos fallidos consecutivos");
                 recalcularRutaPorCongestion();
                 intentosFallidosConsecutivos = 0;
@@ -219,18 +219,18 @@ public class Vehiculo extends Thread {
 
     private void liberarInterseccionAnterior(Interseccion interseccionAnterior) {
         try {
-            // ✅ VERIFICAR que no estamos intentando liberar la partida o el destino final
+            // VERIFICAR que no estamos intentando liberar la partida o el destino final
             if (interseccionAnterior.equals(partida) || interseccionAnterior.equals(destino)) {
                 return; // No liberar partida o destino
             }
 
-            // ✅ VERIFICAR que tenemos el lock antes de intentar liberar
+            // VERIFICAR que tenemos el lock antes de intentar liberar
             if (tieneMetodoIntentarSalir(interseccionAnterior)) {
                 boolean liberado = interseccionAnterior.intentarSalir(this);
                 if (liberado) {
-                    System.out.println("🔓 Vehículo " + id + " liberó " + interseccionAnterior);
+                    System.out.println("Vehículo " + id + " liberó " + interseccionAnterior);
                 } else {
-                    // ❌ NO imprimir error - es normal no tener el lock después de reset
+                    // NO imprimir error - es normal no tener el lock después de reset
                 }
             } else {
                 // Método tradicional con verificación
@@ -240,14 +240,14 @@ public class Vehiculo extends Thread {
                 } else {
                     try {
                         interseccionAnterior.salir(this);
-                        System.out.println("🔓 Vehículo " + id + " liberó " + interseccionAnterior);
+                        System.out.println("Vehículo " + id + " liberó " + interseccionAnterior);
                     } catch (Exception e) {
-                        // ❌ NO imprimir error - es normal después de reset
+                        // NO imprimir error - es normal después de reset
                     }
                 }
             }
         } catch (Exception e) {
-            // ❌ NO imprimir error - silenciar completamente los errores de liberación
+            // NO imprimir error - silenciar completamente los errores de liberación
         }
     }
 
@@ -306,9 +306,9 @@ public class Vehiculo extends Thread {
             int dx = Math.abs(siguiente.getX() - actual.getX());
             int dy = Math.abs(siguiente.getY() - actual.getY());
 
-            // ✅ VERIFICAR que el movimiento sea válido (solo 1 coordenada cambia)
+            // VERIFICAR que el movimiento sea válido (solo 1 coordenada cambia)
             if (dx + dy != 1) {
-                System.err.println("❌ RUTA INVÁLIDA: Movimiento imposible de " + actual + " a " + siguiente +
+                System.err.println("[ERROR] RUTA INVÁLIDA: Movimiento imposible de " + actual + " a " + siguiente +
                         " (dx=" + dx + ", dy=" + dy + ")");
                 return false;
             }
@@ -331,7 +331,7 @@ public class Vehiculo extends Thread {
         int maxPasos = ciudad.getAncho() * ciudad.getAlto();
         int pasos = 0;
 
-        // ✅ MOVIMIENTO GARANTIZADO VÁLIDO: Primero X, luego Y
+        // MOVIMIENTO GARANTIZADO VÁLIDO: Primero X, luego Y
         while (xActual != xDestino && pasos < maxPasos) {
             xActual += (xDestino > xActual) ? 1 : -1;
             Interseccion siguiente = ciudad.getInterseccion(xActual, yActual);
@@ -351,7 +351,7 @@ public class Vehiculo extends Thread {
         }
 
         if (pasos >= maxPasos) {
-            System.err.println("❌ Ruta de emergencia alcanzó límite de pasos");
+            System.err.println("[ERROR] Ruta de emergencia alcanzó límite de pasos");
         }
 
         return ruta;
@@ -366,28 +366,28 @@ public class Vehiculo extends Thread {
             this.indiceRutaActual = 0;
 
             if (ruta == null || ruta.isEmpty()) {
-                System.err.println("❌ Vehículo " + id + ": No se pudo calcular ruta");
+                System.err.println("[ERROR] Vehículo " + id + ": No se pudo calcular ruta");
                 haLlegado = true;
                 return;
             }
 
-            // ✅ VALIDAR Ruta ANTES de usarla
+            // VALIDAR Ruta ANTES de usarla
             if (!validarRuta(ruta)) {
-                System.err.println("❌ Vehículo " + id + ": Ruta inválida, recalculando con emergencia...");
+                System.err.println("[ERROR] Vehículo " + id + ": Ruta inválida, recalculando con emergencia...");
                 // Forzar recálculo con ruta simple de emergencia
                 this.ruta = calcularRutaSimpleEmergencia(posicionActual, destino);
 
                 if (!validarRuta(ruta)) {
-                    System.err.println("❌ Vehículo " + id + ": Ruta de emergencia también inválida");
+                    System.err.println("[ERROR] Vehículo " + id + ": Ruta de emergencia también inválida");
                     haLlegado = true;
                     return;
                 }
             }
 
-            System.out.println("📍 Vehículo " + id + " ruta calculada: " + ruta.size() + " pasos");
+            System.out.println("Vehículo " + id + " ruta calculada: " + ruta.size() + " pasos");
 
         } catch (Exception e) {
-            System.err.println("❌ ERROR calculando ruta para vehículo " + id + ": " + e.getMessage());
+            System.err.println("[ERROR] calculando ruta para vehículo " + id + ": " + e.getMessage());
             haLlegado = true;
         }
     }
@@ -403,9 +403,9 @@ public class Vehiculo extends Thread {
         int dx = siguiente.getX() - actual.getX();
         int dy = siguiente.getY() - actual.getY();
 
-        // ✅ DETECCIÓN DE MOVIMIENTO INVÁLIDO
+        // DETECCIÓN DE MOVIMIENTO INVÁLIDO
         if ((dx != 0 && dy != 0) || (dx == 0 && dy == 0)) {
-            System.err.println("❌ ERROR: Movimiento inválido de " + actual + " a " + siguiente +
+            System.err.println("[ERROR]: Movimiento inválido de " + actual + " a " + siguiente +
                     " (dx=" + dx + ", dy=" + dy + ")");
             // Forzar movimiento horizontal si hay problema
             if (dx != 0) {
@@ -430,15 +430,15 @@ public class Vehiculo extends Thread {
         totalRecalculaciones++;
 
         if (totalRecalculaciones >= MAX_RECALCULACIONES) {
-            System.out.println("🔄🔄🔄 Vehículo " + id + " RESET TOTAL por demasiadas recalculaciones");
+            System.out.println("Vehículo " + id + " RESET TOTAL por demasiadas recalculaciones");
             resetTotal();
             return;
         }
 
-        System.out.println("🔄 Vehículo " + id + " recalculando ruta por congestión (" +
+        System.out.println("Vehículo " + id + " recalculando ruta por congestión (" +
                 totalRecalculaciones + "/" + MAX_RECALCULACIONES + ")");
 
-        // ✅ Liberar intersección actual antes de recalcular
+        // Liberar intersección actual antes de recalcular
         if (posicionActual != null && !posicionActual.equals(partida)) {
             try {
                 if (tieneMetodoIntentarSalir(posicionActual)) {
@@ -446,9 +446,9 @@ public class Vehiculo extends Thread {
                 } else {
                     posicionActual.salir(this);
                 }
-                System.out.println("🔓 Vehículo " + id + " liberó intersección para recálculo");
+                System.out.println("Vehículo " + id + " liberó intersección para recálculo");
             } catch (Exception e) {
-                System.err.println("⚠️ Error al liberar intersección para recálculo: " + e.getMessage());
+                System.err.println("Error al liberar intersección para recálculo: " + e.getMessage());
             }
         }
 
@@ -464,9 +464,9 @@ public class Vehiculo extends Thread {
      * Reset total del vehículo - VERSIÓN MEJORADA
      */
     private void resetTotal() {
-        System.out.println("🔄🔄🔄 RESET TOTAL para Vehículo " + id);
+        System.out.println("RESET TOTAL para Vehículo " + id);
 
-        // ✅ Liberar cualquier intersección de manera SILENCIOSA
+        // Liberar cualquier intersección de manera SILENCIOSA
         if (posicionActual != null && !posicionActual.equals(partida)) {
             try {
                 liberarInterseccionAnterior(posicionActual);
@@ -475,7 +475,7 @@ public class Vehiculo extends Thread {
             }
         }
 
-        // ✅ Volver al punto de partida
+        // Volver al punto de partida
         this.posicionActual = partida;
         this.indiceRutaActual = 0;
         this.totalRecalculaciones = 0;
@@ -483,21 +483,21 @@ public class Vehiculo extends Thread {
         this.tiempoInicioEsperaActual = System.currentTimeMillis();
         this.tiempoUltimoMovimiento = System.currentTimeMillis();
 
-        // ✅ Calcular nueva ruta
+        // Calcular nueva ruta
         calcularRuta();
 
-        System.out.println("✅ Vehículo " + id + " reset completo, reiniciando desde " + partida);
+        System.out.println("Vehículo " + id + " reset completo, reiniciando desde " + partida);
     }
 
     /**
      * Verifica si debe hacer un reset total
      */
     private boolean debeHacerResetTotal() {
-        // ✅ Solo reset después de MUCHAS recalculaciones O tiempo muy largo
+        // Solo reset después de MUCHAS recalculaciones O tiempo muy largo
         boolean porRecalculaciones = totalRecalculaciones >= MAX_RECALCULACIONES;
         boolean porTiempo = (System.currentTimeMillis() - tiempoInicioViaje) > 120000; // 2 minutos
 
-        // ✅ Evitar reset demasiado frecuente
+        // Evitar reset demasiado frecuente
         boolean tiempoDesdeUltimoReset = (System.currentTimeMillis() - tiempoUltimoMovimiento) > 15000; // 15 seg mínimo
 
         return (porRecalculaciones || porTiempo) && tiempoDesdeUltimoReset;
@@ -507,9 +507,9 @@ public class Vehiculo extends Thread {
      * Recuperación agresiva de deadlock
      */
     private void recuperarDeDeadlock() {
-        System.err.println("🔄🔄🔄 RECUPERACIÓN DE DEADLOCK para Vehículo " + id);
+        System.err.println("RECUPERACIÓN DE DEADLOCK para Vehículo " + id);
 
-        // ✅ Liberar cualquier recurso bloqueado
+        // Liberar cualquier recurso bloqueado
         if (posicionActual != null && !posicionActual.equals(partida)) {
             try {
                 if (tieneMetodoIntentarSalir(posicionActual)) {
@@ -517,19 +517,19 @@ public class Vehiculo extends Thread {
                 } else {
                     posicionActual.salir(this);
                 }
-                System.out.println("🔓 Vehículo " + id + " liberó intersección en recuperación");
+                System.out.println("Vehículo " + id + " liberó intersección en recuperación");
             } catch (Exception e) {
                 // Ignorar errores en recuperación
             }
         }
 
-        // ✅ Saltar a una posición segura
+        // Saltar a una posición segura
         if (ruta != null && indiceRutaActual < ruta.size() - 1) {
             // Saltar varios pasos en la ruta
             int saltos = Math.min(3, ruta.size() - indiceRutaActual - 1);
             indiceRutaActual += saltos;
             posicionActual = ruta.get(indiceRutaActual);
-            System.out.println("➡️ Vehículo " + id + " saltó " + saltos + " pasos a " + posicionActual);
+            System.out.println("Vehículo " + id + " saltó " + saltos + " pasos a " + posicionActual);
         } else {
             // Reset completo
             resetTotal();
@@ -548,7 +548,7 @@ public class Vehiculo extends Thread {
      */
     public void pausar() {
         this.pausado = true;
-        System.out.println("⏸️ Vehículo " + id + " pausado");
+        System.out.println("Vehículo " + id + " pausado");
     }
 
     /**
@@ -556,7 +556,7 @@ public class Vehiculo extends Thread {
      */
     public void reanudar() {
         this.pausado = false;
-        System.out.println("▶️ Vehículo " + id + " reanudado");
+        System.out.println("Vehículo " + id + " reanudado");
     }
 
     /**
@@ -566,7 +566,7 @@ public class Vehiculo extends Thread {
         this.ejecutando = false;
         this.interrupt();
 
-        // ✅ Liberar la intersección actual de manera segura
+        // Liberar la intersección actual de manera segura
         if (posicionActual != null) {
             try {
                 if (tieneMetodoIntentarSalir(posicionActual)) {
@@ -578,13 +578,13 @@ public class Vehiculo extends Thread {
                         posicionActual.salir(this);
                     }
                 }
-                System.out.println("🔓 Vehículo " + id + " liberó intersección al detenerse");
+                System.out.println("Vehículo " + id + " liberó intersección al detenerse");
             } catch (Exception e) {
-                System.err.println("❌ ERROR liberando intersección al detener vehículo " + id + ": " + e.getMessage());
+                System.err.println("[ERROR] liberando intersección al detener vehículo " + id + ": " + e.getMessage());
             }
         }
 
-        System.out.println("⏹️ Vehículo " + id + " detenido");
+        System.out.println("Vehículo " + id + " detenido");
     }
 
     // Getters para estado del vehículo
@@ -620,6 +620,6 @@ public class Vehiculo extends Thread {
     @Override
     public String toString() {
         return String.format("Vehículo %d [%s -> %s] %s",
-                id, partida, destino, haLlegado ? "🏁" : "🚗");
+                id, partida, destino, haLlegado ? "[LLEGADO]" : "[EN RUTA]");
     }
 }

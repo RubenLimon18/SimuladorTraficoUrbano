@@ -152,27 +152,27 @@ public class StatsManager {
      */
     public String generarResumenCompleto() {
         StringBuilder resumen = new StringBuilder();
-        resumen.append("🏁 RESUMEN FINAL DE SIMULACIÓN 🏁\n\n");
-        resumen.append("📊 ESTADÍSTICAS GENERALES:\n");
-        resumen.append(String.format("• Tiempo total: %d segundos\n", getTiempoTotalSimulacion()));
-        resumen.append(String.format("• Vehículos activos: %d\n", getVehiculosActivos()));
-        resumen.append(String.format("• Vehículos completados: %d\n", getVehiculosCompletados()));
-        resumen.append(String.format("• Congestión total: %d\n", getCongestionTotal()));
-        resumen.append(String.format("• Colisiones evitadas: %d\n", getColisionesEvitadas()));
+        resumen.append("=== RESUMEN FINAL DE SIMULACION ===\n\n");
+        resumen.append("[ ESTADISTICAS GENERALES ]\n");
+        resumen.append(String.format("- Tiempo total: %d segundos\n", getTiempoTotalSimulacion()));
+        resumen.append(String.format("- Vehiculos activos: %d\n", getVehiculosActivos()));
+        resumen.append(String.format("- Vehiculos completados: %d\n", getVehiculosCompletados()));
+        resumen.append(String.format("- Congestion total: %d\n", getCongestionTotal()));
+        resumen.append(String.format("- Colisiones evitadas: %d\n", getColisionesEvitadas()));
 
-        resumen.append("\n⏱️  TIEMPOS:\n");
-        resumen.append(String.format("• Tiempo promedio de viaje: %.2f segundos\n", getTiempoPromedioViaje()));
-        resumen.append(String.format("• Tiempo máximo de espera: %.2f segundos\n", getTiempoMaximoEspera()));
+        resumen.append("\n[ TIEMPOS ]\n");
+        resumen.append(String.format("- Tiempo promedio de viaje: %.2f segundos\n", getTiempoPromedioViaje()));
+        resumen.append(String.format("- Tiempo maximo de espera: %.2f segundos\n", getTiempoMaximoEspera()));
 
         if (primerVehiculoEnLlegar != null) {
-            resumen.append(String.format("• Primer vehículo en llegar: #%d (%d segundos)\n",
+            resumen.append(String.format("- Primer vehiculo en llegar: #%d (%d segundos)\n",
                     primerVehiculoEnLlegar.getIdVehiculo(), tiempoPrimerVehiculo));
         }
 
-        resumen.append("\n🚦 EFICIENCIA:\n");
-        resumen.append(String.format("• Eficiencia de semáforos: %.1f%%\n", getEficienciaSemaforos()));
-        resumen.append(String.format("• Velocidad promedio: %.2f celdas/segundo\n", getVelocidadPromedio()));
-        resumen.append(String.format("• Mejora por paralelismo: %.1f%%\n", getPorcentajeMejoraParalelo()));
+        resumen.append("\n[ EFICIENCIA ]\n");
+        resumen.append(String.format("- Eficiencia de semaforos: %.1f%%\n", getEficienciaSemaforos()));
+        resumen.append(String.format("- Velocidad promedio: %.2f celdas/segundo\n", getVelocidadPromedio()));
+        resumen.append(String.format("- Mejora por paralelismo: %.1f%%\n", getPorcentajeMejoraParalelo()));
 
         return resumen.toString();
     }

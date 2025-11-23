@@ -31,12 +31,12 @@ public class Interseccion {
      */
     public boolean intentarEntrar(Vehiculo vehiculo, Direccion direccion){
         if (!semaforoPermitePaso(direccion)) {
-            System.out.println("🚦 " + vehiculo + " esperando en semáforo rojo en " + this);
+            System.out.println("[ROJO] " + vehiculo + " esperando en semáforo rojo en " + this);
             return false;
         }
 
         if (lock.isHeldByCurrentThread()) {
-            System.out.println("⚠️ " + vehiculo + " ya tiene el lock de " + this);
+            System.out.println("[ALERTA] " + vehiculo + " ya tiene el lock de " + this);
             return true;
         }
 
@@ -56,16 +56,16 @@ public class Interseccion {
                 tiempoTotalEspera += tiempoEspera;
                 vehiculosAtendidos++;
 
-                System.out.println("✅ " + vehiculo + " entró en " + this +
+                System.out.println("[EXITO] " + vehiculo + " entró en " + this +
                         " después de " + tiempoEspera + "ms");
             }
             else{
-                System.out.println("❌ " + vehiculo + " TIMEOUT en " + this +
+                System.out.println("[TIMEOUT] " + vehiculo + " en " + this +
                         " - vehículos esperando: " + vehiculosEnEspera.get());
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.out.println("⏹️ " + vehiculo + " interrumpido esperando en " + this);
+            System.out.println("[INTERRUMPIDO] " + vehiculo + " esperando en " + this);
         } finally {
             if (estabaEsperando) {
                 vehiculosEnEspera.decrementAndGet();
@@ -82,9 +82,9 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread()) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("🔓 " + vehiculo + " liberó " + this);
+            System.out.println("[LIBERADO] " + vehiculo + " liberó " + this);
         } else {
-            System.err.println("❌ ERROR: " + vehiculo + " intentó liberar lock sin tenerlo en " + this);
+            System.err.println("[ERROR] " + vehiculo + " intentó liberar lock sin tenerlo en " + this);
         }
     }
 
@@ -95,7 +95,7 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread()) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("🔓 Lock liberado en " + this);
+            System.out.println("[LIBERADO] Lock liberado en " + this);
         }
     }
 
@@ -106,18 +106,18 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread() && this.vehiculoActual == vehiculo) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("🔓 " + vehiculo + " liberó " + this);
+            System.out.println("[LIBERADO] " + vehiculo + " liberó " + this);
             return true;
         }
         return false;
     }
 
-    // ✅ GETTER PARA SEMÁFORO - AÑADIR ESTE MÉTODO
+    // GETTER PARA SEMÁFORO - AÑADIR ESTE MÉTODO
     public Semaforo getSemaforo() {
         return semaforo;
     }
 
-    // ✅ SETTER PARA SEMÁFORO - AÑADIR ESTE MÉTODO TAMBIÉN
+    // SETTER PARA SEMÁFORO - AÑADIR ESTE MÉTODO TAMBIÉN
     public void setSemaforo(Semaforo semaforo) {
         this.semaforo = semaforo;
     }
