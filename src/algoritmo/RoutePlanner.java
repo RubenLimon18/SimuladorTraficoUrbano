@@ -5,6 +5,11 @@ import clases.Ciudad;
 import clases.Direccion;
 import java.util.*;
 
+/**
+ * RoutePlanner
+ * Clase encargada de calcular rutas dentro de una ciudad utilizando
+ * A* como algoritmo principal y un método simple como respaldo.
+ */
 public class RoutePlanner {
     private Ciudad ciudad;
     private Random random;
@@ -14,54 +19,76 @@ public class RoutePlanner {
         this.random = new Random();
     }
 
+    /**
+     * Calcula la ruta desde una intersección inicial hasta una de destino.
+     * Utiliza A*, y si falla usa una ruta simple como alternativa.
+     */
     public List<Interseccion> calcularRuta(Interseccion inicio, Interseccion destino) {
-        System.out.println("🔄 Calculando ruta desde " + inicio + " hasta " + destino);
+        System.out.println("Calculando ruta desde " + inicio + " hasta " + destino);
+
+        // Intentar A*
         List<Interseccion> ruta = aStar(inicio, destino);
 
+        // Si A* no encuentra ruta, usar método simple
         if (ruta == null || ruta.isEmpty()) {
             ruta = calcularRutaSimple(inicio, destino);
         }
 
-        System.out.println("📍 Ruta calculada: " + ruta.size() + " intersecciones");
+        System.out.println("Ruta calculada con " + ruta.size() + " intersecciones");
         return ruta;
     }
 
+    /**
+     * Implementación del algoritmo A* para encontrar la ruta óptima.
+     */
     private List<Interseccion> aStar(Interseccion inicio, Interseccion destino) {
         Map<Interseccion, Interseccion> cameFrom = new HashMap<>();
         Map<Interseccion, Double> gScore = new HashMap<>();
         Map<Interseccion, Double> fScore = new HashMap<>();
 
-        // ✅ Usar PriorityQueue correctamente
+        // PriorityQueue ordenada por menor fScore
         PriorityQueue<Interseccion> openSet = new PriorityQueue<>(
-                (a, b) -> Double.compare(fScore.getOrDefault(a, Double.MAX_VALUE),
-                        fScore.getOrDefault(b, Double.MAX_VALUE))
+                (a, b) -> Double.compare(
+                        fScore.getOrDefault(a, Double.MAX_VALUE),
+                        fScore.getOrDefault(b, Double.MAX_VALUE)
+                )
         );
 
         Set<Interseccion> closedSet = new HashSet<>();
 
+        // Inicializar valores del nodo inicial
         gScore.put(inicio, 0.0);
         fScore.put(inicio, heuristic(inicio, destino));
         openSet.add(inicio);
 
         while (!openSet.isEmpty()) {
+            // Se toma la intersección con menor fScore
             Interseccion current = openSet.poll();
 
+            // Si llegamos al destino, reconstruimos la ruta
             if (current.equals(destino)) {
                 return reconstruirRuta(cameFrom, current);
             }
 
             closedSet.add(current);
 
+            // Explorar vecinos
             for (Interseccion neighbor : getVecinosValidos(current)) {
                 if (closedSet.contains(neighbor)) {
-                    continue;
+                    continue; // Ignorar si ya se procesó
                 }
 
+                // Costo tentativo desde el inicio hasta el vecino
                 double tentativeGScore = gScore.get(current) + calcularCosto(current, neighbor);
 
-                if (!openSet.contains(neighbor) || tentativeGScore < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
+                // Si es un mejor camino, actualizar
+                if (!openSet.contains(neighbor) ||
+                    tentativeGScore < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
+
                     cameFrom.put(neighbor, current);
                     gScore.put(neighbor, tentativeGScore);
+
+                    // fScore = costo recorrido + heurística al destino
                     fScore.put(neighbor, tentativeGScore + heuristic(neighbor, destino));
 
                     if (!openSet.contains(neighbor)) {
@@ -74,36 +101,52 @@ public class RoutePlanner {
         return null; // No se encontró ruta
     }
 
+    /**
+     * Calcula el costo entre dos intersecciones.
+     * Considera:
+     *  - Costo base fijo.
+     *  - Congestión en la intersección.
+     *  - Tiempo estimado por semáforo.
+     */
     private double calcularCosto(Interseccion desde, Interseccion hacia) {
         double costoBase = 1.0;
 
-        // ✅ Costo por congestión
+        // Costo adicional por congestión (vehículos esperando)
         double costoCcongestion = hacia.getVehiculosEnEspera() * 2.0;
 
-        // ✅ Costo por semáforo (estimado)
+        // Costo estimado por semáforo
         double costoSemaforo = 0.5;
 
         return costoBase + costoCcongestion + costoSemaforo;
     }
 
+    /**
+     * Obtiene los vecinos válidos en las 4 direcciones cardinales.
+     */
     private List<Interseccion> getVecinosValidos(Interseccion actual) {
         List<Interseccion> vecinos = new ArrayList<>();
         int x = actual.getX();
         int y = actual.getY();
 
-        // Verificar vecinos en las 4 direcciones
+        // Izquierda
         if (x > 0) {
             Interseccion vecino = ciudad.getInterseccion(x - 1, y);
             if (vecino != null) vecinos.add(vecino);
         }
+
+        // Derecha
         if (x < ciudad.getAncho() - 1) {
             Interseccion vecino = ciudad.getInterseccion(x + 1, y);
             if (vecino != null) vecinos.add(vecino);
         }
+
+        // Arriba
         if (y > 0) {
             Interseccion vecino = ciudad.getInterseccion(x, y - 1);
             if (vecino != null) vecinos.add(vecino);
         }
+
+        // Abajo
         if (y < ciudad.getAlto() - 1) {
             Interseccion vecino = ciudad.getInterseccion(x, y + 1);
             if (vecino != null) vecinos.add(vecino);
@@ -112,27 +155,40 @@ public class RoutePlanner {
         return vecinos;
     }
 
+    /**
+     * Función heurística del A* (distancia Manhattan).
+     */
     private double heuristic(Interseccion a, Interseccion b) {
-        // Distancia Manhattan
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
     }
 
+    /**
+     * Reconstruye la ruta final a partir del mapa de nodos padre.
+     */
     private List<Interseccion> reconstruirRuta(Map<Interseccion, Interseccion> cameFrom, Interseccion current) {
         List<Interseccion> ruta = new LinkedList<>();
+
         while (current != null) {
-            ruta.add(0, current);
+            ruta.add(0, current); // Insertar al inicio
             current = cameFrom.get(current);
         }
+
         return ruta;
     }
 
+    /**
+     * A* alternativo para evitar intersecciones específicas.
+     * (Implementación simplificada por ahora).
+     */
     private List<Interseccion> aStarEvitando(Interseccion inicio, Interseccion destino,
                                              Set<Interseccion> evitar) {
-        // Implementación similar a A* pero evitando ciertas intersecciones
-        // (puedes adaptar el A* original para saltar intersecciones en el conjunto 'evitar')
-        return aStar(inicio, destino); // Implementación simplificada
+        return aStar(inicio, destino);
     }
 
+    /**
+     * Método simple para calcular una ruta cuando A* falla.
+     * Avanza de forma determinista o aleatoria hacia el destino.
+     */
     private List<Interseccion> calcularRutaSimple(Interseccion inicio, Interseccion destino) {
         List<Interseccion> ruta = new ArrayList<>();
         ruta.add(inicio);
@@ -146,10 +202,11 @@ public class RoutePlanner {
         int maxPasos = ciudad.getAncho() * ciudad.getAlto() * 2;
         int pasos = 0;
 
+        // Avanzar hasta llegar o agotar intentos
         while ((xActual != xDestino || yActual != yDestino) && pasos < maxPasos) {
             pasos++;
 
-            // Decidir dirección preferente
+            // Elegir dirección prioritaria
             if (xActual != xDestino && (random.nextBoolean() || yActual == yDestino)) {
                 xActual += (xDestino > xActual) ? 1 : -1;
             } else if (yActual != yDestino) {
@@ -157,19 +214,19 @@ public class RoutePlanner {
             }
 
             Interseccion siguiente = ciudad.getInterseccion(xActual, yActual);
+
+            // Evitar ciclos
             if (siguiente != null && !ruta.contains(siguiente)) {
                 ruta.add(siguiente);
             } else {
-                // Evitar ciclos
                 break;
             }
         }
 
         if (pasos >= maxPasos) {
-            System.out.println("⚠️  Ruta simple alcanzó límite de pasos");
+            System.out.println("Ruta simple alcanzó límite de pasos");
         }
 
         return ruta;
     }
-
 }
