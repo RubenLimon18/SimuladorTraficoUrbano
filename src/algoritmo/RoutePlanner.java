@@ -11,8 +11,8 @@ import java.util.*;
  * A* como algoritmo principal y un método simple como respaldo.
  */
 public class RoutePlanner {
-    private Ciudad ciudad;
-    private Random random;
+    private Ciudad ciudad; // Ciudad sobre la que se calcularan las rutas
+    private Random random; // Se usa para generar decisiones aleatorias en rutas simples
 
     public RoutePlanner(Ciudad ciudad) {
         this.ciudad = ciudad;
@@ -42,8 +42,14 @@ public class RoutePlanner {
      * Implementación del algoritmo A* para encontrar la ruta óptima.
      */
     private List<Interseccion> aStar(Interseccion inicio, Interseccion destino) {
+
+        // Guarda de qué intersección proviene cada nodo (para reconstruir la ruta)
         Map<Interseccion, Interseccion> cameFrom = new HashMap<>();
+
+        // gScore = coste desde el inicio hasta el nodo actual
         Map<Interseccion, Double> gScore = new HashMap<>();
+
+        // fScore = gScore + heurística (lo que falta hasta el destino)
         Map<Interseccion, Double> fScore = new HashMap<>();
 
         // PriorityQueue ordenada por menor fScore
@@ -54,6 +60,8 @@ public class RoutePlanner {
                 )
         );
 
+
+        // Conjunto cerrado (nodos ya evaluados)
         Set<Interseccion> closedSet = new HashSet<>();
 
         // Inicializar valores del nodo inicial
@@ -70,10 +78,14 @@ public class RoutePlanner {
                 return reconstruirRuta(cameFrom, current);
             }
 
+
+            // Marcamos como visitado
             closedSet.add(current);
 
             // Explorar vecinos
             for (Interseccion neighbor : getVecinosValidos(current)) {
+
+                // Saltar vecinos ya evaluados
                 if (closedSet.contains(neighbor)) {
                     continue; // Ignorar si ya se procesó
                 }
@@ -86,14 +98,18 @@ public class RoutePlanner {
                     tentativeGScore < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
 
                     cameFrom.put(neighbor, current);
+
+                    // Actualizamos los costes
                     gScore.put(neighbor, tentativeGScore);
 
                     // fScore = costo recorrido + heurística al destino
                     fScore.put(neighbor, tentativeGScore + heuristic(neighbor, destino));
 
+                    // Si es la primera vez que vemos al vecino, lo añadimos a openSet
                     if (!openSet.contains(neighbor)) {
                         openSet.add(neighbor);
                     }
+
                 }
             }
         }
@@ -117,6 +133,7 @@ public class RoutePlanner {
         // Costo estimado por semáforo
         double costoSemaforo = 0.5;
 
+        // El coste total afecta qué rutas prefiere A*
         return costoBase + costoCcongestion + costoSemaforo;
     }
 
@@ -224,6 +241,7 @@ public class RoutePlanner {
         }
 
         if (pasos >= maxPasos) {
+            System.out.println("Ruta simple alcanzó límite de pasos");
             System.out.println("Ruta simple alcanzó límite de pasos");
         }
 
