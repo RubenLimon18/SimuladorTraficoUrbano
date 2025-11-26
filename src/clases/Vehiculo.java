@@ -118,7 +118,7 @@ public class Vehiculo extends Thread {
         // DETECCIÓN DE DEADLOCK
         long tiempoActual = System.currentTimeMillis();
         if (tiempoActual - tiempoUltimoMovimiento > TIEMPO_MAXIMO_SIN_MOVER) {
-            System.err.println("[ALERTA] Vehículo " + id + " posible DEADLOCK detectado - " +
+            System.err.println("ALERTA Vehículo " + id + " posible DEADLOCK detectado - " +
                     (tiempoActual - tiempoUltimoMovimiento) + "ms sin moverse");
             recuperarDeDeadlock();
             return;
@@ -308,7 +308,7 @@ public class Vehiculo extends Thread {
 
             // VERIFICAR que el movimiento sea válido (solo 1 coordenada cambia)
             if (dx + dy != 1) {
-                System.err.println("[ERROR] RUTA INVÁLIDA: Movimiento imposible de " + actual + " a " + siguiente +
+                System.err.println("ERROR RUTA INVÁLIDA: Movimiento imposible de " + actual + " a " + siguiente +
                         " (dx=" + dx + ", dy=" + dy + ")");
                 return false;
             }
@@ -328,7 +328,7 @@ public class Vehiculo extends Thread {
         int xDestino = destino.getX();
         int yDestino = destino.getY();
 
-        int maxPasos = ciudad.getAncho() * ciudad.getAlto();
+        int maxPasos = 2000;//ciudad.getAncho() * ciudad.getAlto();
         int pasos = 0;
 
         // MOVIMIENTO GARANTIZADO VÁLIDO: Primero X, luego Y
@@ -351,7 +351,7 @@ public class Vehiculo extends Thread {
         }
 
         if (pasos >= maxPasos) {
-            System.err.println("[ERROR] Ruta de emergencia alcanzó límite de pasos");
+            System.err.println("ERROR Ruta de emergencia alcanzó límite de pasos");
         }
 
         return ruta;
@@ -366,19 +366,19 @@ public class Vehiculo extends Thread {
             this.indiceRutaActual = 0;
 
             if (ruta == null || ruta.isEmpty()) {
-                System.err.println("[ERROR] Vehículo " + id + ": No se pudo calcular ruta");
+                System.err.println("ERROR Vehículo " + id + ": No se pudo calcular ruta");
                 haLlegado = true;
                 return;
             }
 
             // VALIDAR Ruta ANTES de usarla
             if (!validarRuta(ruta)) {
-                System.err.println("[ERROR] Vehículo " + id + ": Ruta inválida, recalculando con emergencia...");
+                System.err.println("ERROR Vehículo " + id + ": Ruta inválida, recalculando con emergencia...");
                 // Forzar recálculo con ruta simple de emergencia
                 this.ruta = calcularRutaSimpleEmergencia(posicionActual, destino);
 
                 if (!validarRuta(ruta)) {
-                    System.err.println("[ERROR] Vehículo " + id + ": Ruta de emergencia también inválida");
+                    System.err.println("ERROR Vehículo " + id + ": Ruta de emergencia también inválida");
                     haLlegado = true;
                     return;
                 }
@@ -387,7 +387,7 @@ public class Vehiculo extends Thread {
             System.out.println("Vehículo " + id + " ruta calculada: " + ruta.size() + " pasos");
 
         } catch (Exception e) {
-            System.err.println("[ERROR] calculando ruta para vehículo " + id + ": " + e.getMessage());
+            System.err.println("ERROR calculando ruta para vehículo " + id + ": " + e.getMessage());
             haLlegado = true;
         }
     }
@@ -405,7 +405,7 @@ public class Vehiculo extends Thread {
 
         // DETECCIÓN DE MOVIMIENTO INVÁLIDO
         if ((dx != 0 && dy != 0) || (dx == 0 && dy == 0)) {
-            System.err.println("[ERROR]: Movimiento inválido de " + actual + " a " + siguiente +
+            System.err.println("ERROR: Movimiento inválido de " + actual + " a " + siguiente +
                     " (dx=" + dx + ", dy=" + dy + ")");
             // Forzar movimiento horizontal si hay problema
             if (dx != 0) {
@@ -538,10 +538,6 @@ public class Vehiculo extends Thread {
         tiempoUltimoMovimiento = System.currentTimeMillis();
         intentosFallidosConsecutivos = 0;
     }
-
-    /**
-     * SOLUCIÓN DE EMERGENCIA - Ejecutar esto para vehículos atascados
-     */
 
     /**
      * Pausa el vehículo

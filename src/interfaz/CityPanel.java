@@ -85,7 +85,7 @@ public class CityPanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        // Llamo a cada parte del dibujo por separado para mantener el orden y claridad
+        // Se llama a cada parte del dibujo por separado para mantener el orden y claridad
         dibujarCalles(g2d);
         dibujarIntersecciones(g2d);
         dibujarSemaforos(g2d);
@@ -196,14 +196,20 @@ public class CityPanel extends JPanel {
 
                 if (punto != null && punto.x >= 0 && punto.y >= 0) {
 
+                    float matiz = (vehiculo.getIdVehiculo() * 0.13f) % 1.0f;
+                    Color colorUnico = Color.getHSBColor(matiz, 0.9f,0.9f);
+
+                    g2d.setColor(colorUnico);
+
                     // Color según estado del vehículo
-                    if (vehiculo.estaEsperando()) {
-                        g2d.setColor(Color.ORANGE);
-                    } else if (vehiculo.estaEnInterseccion()) {
+                    /*if (vehiculo.estaEsperando()) {
                         g2d.setColor(Color.RED);
+                    } else if (vehiculo.estaEnInterseccion()) {
+                        g2d.setColor(Color.GREEN);
                     } else {
                         g2d.setColor(Color.BLUE);
-                    }
+                    }*/
+
 
                     // Dibujo del vehículo (círculo)
                     g2d.fillOval(

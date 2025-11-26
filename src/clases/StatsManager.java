@@ -139,8 +139,8 @@ public class StatsManager {
     }
 
     public double getPorcentajeMejoraParalelo() {
-        // Simulación de mejora por paralelismo (puedes ajustar esta lógica)
-        return 35.7; // 35.7% de mejora estimada
+        // Valor estatico
+        return 35.7;
     }
 
     public Ciudad getCiudad() {
@@ -152,15 +152,15 @@ public class StatsManager {
      */
     public String generarResumenCompleto() {
         StringBuilder resumen = new StringBuilder();
-        resumen.append("=== RESUMEN FINAL DE SIMULACION ===\n\n");
-        resumen.append("[ ESTADISTICAS GENERALES ]\n");
+        resumen.append("RESUMEN FINAL DE SIMULACION\n\n");
+        resumen.append("ESTADISTICAS GENERALES \n");
         resumen.append(String.format("- Tiempo total: %d segundos\n", getTiempoTotalSimulacion()));
         resumen.append(String.format("- Vehiculos activos: %d\n", getVehiculosActivos()));
         resumen.append(String.format("- Vehiculos completados: %d\n", getVehiculosCompletados()));
         resumen.append(String.format("- Congestion total: %d\n", getCongestionTotal()));
         resumen.append(String.format("- Colisiones evitadas: %d\n", getColisionesEvitadas()));
 
-        resumen.append("\n[ TIEMPOS ]\n");
+        resumen.append("\nTIEMPOS \n");
         resumen.append(String.format("- Tiempo promedio de viaje: %.2f segundos\n", getTiempoPromedioViaje()));
         resumen.append(String.format("- Tiempo maximo de espera: %.2f segundos\n", getTiempoMaximoEspera()));
 
@@ -169,7 +169,7 @@ public class StatsManager {
                     primerVehiculoEnLlegar.getIdVehiculo(), tiempoPrimerVehiculo));
         }
 
-        resumen.append("\n[ EFICIENCIA ]\n");
+        resumen.append("\n EFICIENCIA \n");
         resumen.append(String.format("- Eficiencia de semaforos: %.1f%%\n", getEficienciaSemaforos()));
         resumen.append(String.format("- Velocidad promedio: %.2f celdas/segundo\n", getVelocidadPromedio()));
         resumen.append(String.format("- Mejora por paralelismo: %.1f%%\n", getPorcentajeMejoraParalelo()));

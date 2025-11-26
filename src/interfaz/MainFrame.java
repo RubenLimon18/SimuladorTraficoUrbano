@@ -23,7 +23,7 @@ public class MainFrame extends JFrame{
     private ControlPanel controlPanel;
     private StatsPanel statsPanel;
     private JSplitPane splitPane;
-    private JScrollPane scrollPane; // ← AGREGADO: JScrollPane
+    private JScrollPane scrollPane;
 
     // Estado de la simulación
     private boolean simulacionEjecutandose = false;
@@ -41,7 +41,7 @@ public class MainFrame extends JFrame{
     private void inicializarCiudad(){
         int tamanio = config.getCiudadTamanio();
         this.ciudad = new Ciudad(tamanio, tamanio);
-        this.routePlanner = new RoutePlanner(ciudad); // ← CORREGIDO
+        this.routePlanner = new RoutePlanner(ciudad);
 
         // Se inicializa la ciudad con las calles y semaforos
         ciudad.inicializarCalles();
@@ -54,16 +54,14 @@ public class MainFrame extends JFrame{
         controlPanel = new ControlPanel(this, config);
         statsPanel = new StatsPanel();
 
-        // ← AGREGADO: Crear JScrollPane para el CityPanel
         scrollPane = new JScrollPane(cityPanel);
         scrollPane.setPreferredSize(new Dimension(800, 600));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        // Configurar split pane para estadísticas - USAR SCROLLPANE
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setTopComponent(scrollPane); // ← CAMBIADO: usar scrollPane en lugar de cityPanel
+        splitPane.setTopComponent(scrollPane);
         splitPane.setBottomComponent(statsPanel);
         splitPane.setResizeWeight(0.7);
 
@@ -111,16 +109,14 @@ public class MainFrame extends JFrame{
             System.out.println("=== INICIANDO SIMULACIÓN ===");
 
             // Crear vehículos
-            ciudad.crearVehiculos(config.getNumVehiculos(), routePlanner); // ← CORREGIDO
+            ciudad.crearVehiculos(config.getNumVehiculos(), routePlanner);
             System.out.println("Vehículos creados, total: " + ciudad.getVehiculos().size());
 
-            // DEBUG: Verificar vehículos inmediatamente después de crearlos
             System.out.println("DEBUG - Vehículos en ciudad: " + ciudad.getVehiculos().size());
             for (Vehiculo v : ciudad.getVehiculos()) {
                 System.out.println("Vehículo " + v.getIdVehiculo() + " - Intersección: " + v.getInterseccionActual());
             }
 
-            // FORZAR ACTUALIZACIÓN INMEDIATA DEL PANEL
             cityPanel.repaint();
             SwingUtilities.invokeLater(() -> {
                 cityPanel.repaint();
@@ -144,7 +140,6 @@ public class MainFrame extends JFrame{
             controlPanel.simulacionIniciada();
             actualizarEstadisticas();
 
-            // FORZAR OTRO REPAINT DESPUÉS DE INICIAR
             SwingUtilities.invokeLater(() -> {
                 cityPanel.repaint();
             });
@@ -261,7 +256,6 @@ public class MainFrame extends JFrame{
             actualizarEstadisticas();
             actualizarTitulo();
 
-            // ← AGREGADO: Actualizar el scroll pane
             scrollPane.setViewportView(cityPanel);
             scrollPane.revalidate();
             scrollPane.repaint();

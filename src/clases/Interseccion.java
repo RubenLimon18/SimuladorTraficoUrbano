@@ -82,9 +82,9 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread()) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("[LIBERADO] " + vehiculo + " liberó " + this);
+            System.out.println("LIBERADO " + vehiculo + " liberó " + this);
         } else {
-            System.err.println("[ERROR] " + vehiculo + " intentó liberar lock sin tenerlo en " + this);
+            System.err.println("ERROR " + vehiculo + " intentó liberar lock sin tenerlo en " + this);
         }
     }
 
@@ -95,7 +95,7 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread()) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("[LIBERADO] Lock liberado en " + this);
+            System.out.println("LIBERADO Lock liberado en " + this);
         }
     }
 
@@ -106,7 +106,7 @@ public class Interseccion {
         if (lock.isHeldByCurrentThread() && this.vehiculoActual == vehiculo) {
             this.vehiculoActual = null;
             lock.unlock();
-            System.out.println("[LIBERADO] " + vehiculo + " liberó " + this);
+            System.out.println("LIBERADO " + vehiculo + " liberó " + this);
             return true;
         }
         return false;

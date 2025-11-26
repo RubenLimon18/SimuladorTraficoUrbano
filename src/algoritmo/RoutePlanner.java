@@ -216,7 +216,7 @@ public class RoutePlanner {
         int yDestino = destino.getY();
 
         // Límite de seguridad para evitar bucles infinitos
-        int maxPasos = ciudad.getAncho() * ciudad.getAlto() * 2;
+        int maxPasos = 2000; //ciudad.getAncho() * ciudad.getAlto() * 2;
         int pasos = 0;
 
         // Avanzar hasta llegar o agotar intentos
